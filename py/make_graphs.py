@@ -1,4 +1,3 @@
-import plotly.graph_objects as go
 import plotly.express as px
 
 
@@ -14,6 +13,8 @@ def get_records(path: str) -> Records:
 
     with open('../results/' + path) as file:
         for line in file:
+            if len(line) > 20:  # Skip noisy lines
+                continue
             line = line.strip()
             if line == '':
                 continue
@@ -48,8 +49,17 @@ def make_graphs(sample_name: str):
     write_latency_over_time_graph(sample_name, records)
 
 
+def list_txt_files():
+    import glob
+    from os import path
+    return [path.splitext(path.basename(filename))[0] for filename in glob.glob("../results/*.txt")]
+    # return list(map(os.path.splitext, map(os.path.basename, glob.glob("../results/*.txt"))))
+
+
 def main():
-    make_graphs('1000q-10H-1')
+    for name in list_txt_files():
+        print(name)
+        make_graphs(name)
 
 
 if __name__ == '__main__':
